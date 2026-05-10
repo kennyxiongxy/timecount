@@ -1,0 +1,19 @@
+# Swift / Xcode
+.build/
+.build
+*.xcodeproj/
+*.xcworkspace/
+xcuserdata/
+DerivedData/
+
+# SPM
+Packages/
+Package.resolved
+
+# macOS
+.DS_Store
+*.app
+
+# Screenshots / assets not part of source
+*.png
+*.jpg
