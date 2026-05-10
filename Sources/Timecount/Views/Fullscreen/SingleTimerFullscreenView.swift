@@ -9,12 +9,14 @@ struct SingleTimerFullscreenView: View {
     @EnvironmentObject var themeManager: ThemeManager
     @AppStorage("timerFontName") private var fontName = "SF Mono"
 
+    @State private var timer: TimerModel?
+
     var body: some View {
         GeometryReader { geometry in
             let safeW = geometry.size.width - 80
             let safeH = geometry.size.height - 120
             let ringSize = min(safeW * 0.65, safeH * 0.6, 550)
-            let timerText = fetchTimer()?.displayTime ?? ""
+            let timerText = timer?.displayTime ?? ""
             let charCount = max(CGFloat(timerText.count), 4)
             let innerDiameter = ringSize * 0.88
             let sideMargin = ringSize * 0.025
@@ -25,7 +27,7 @@ struct SingleTimerFullscreenView: View {
                 themeManager.bg
                     .ignoresSafeArea()
 
-                if let timer = fetchTimer() {
+                if let timer = timer {
                     VStack(spacing: 0) {
                         Spacer(minLength: 40)
 
@@ -76,7 +78,6 @@ struct SingleTimerFullscreenView: View {
 
                         Spacer(minLength: ringSize * 0.15)
 
-                        // Controls always visible
                         HStack(spacing: 50) {
                             Button(action: { togglePlayPause(timer) }) {
                                 Image(systemName: playPauseIcon(timer))
@@ -133,6 +134,22 @@ struct SingleTimerFullscreenView: View {
                 }
             }
         }
+        .onAppear {
+            refreshTimer()
+        }
+        .onChange(of: timerEngine.tickCounter) { _, _ in
+            refreshTimer()
+        }
+        .onReceive(Timer.publish(every: 2, on: .main, in: .common).autoconnect()) { _ in
+            refreshTimer()
+        }
+    }
+
+    private func refreshTimer() {
+        var descriptor = FetchDescriptor<TimerModel>()
+        descriptor.fetchLimit = 1
+        descriptor.predicate = #Predicate { $0.id == timerID }
+        timer = try? modelContext.fetch(descriptor).first
     }
 
     private func statusText(_ timer: TimerModel) -> String {
@@ -142,13 +159,6 @@ struct SingleTimerFullscreenView: View {
         case .finished: return "已完成"
         case .idle:     return "就绪"
         }
-    }
-
-    private func fetchTimer() -> TimerModel? {
-        var descriptor = FetchDescriptor<TimerModel>()
-        descriptor.fetchLimit = 1
-        descriptor.predicate = #Predicate { $0.id == timerID }
-        return try? modelContext.fetch(descriptor).first
     }
 
     private func togglePlayPause(_ timer: TimerModel) {
