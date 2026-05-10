@@ -1,8 +1,8 @@
 # Timecount
 
 面向 macOS 的多计时器倒计时应用，赛博朋克/霓虹灯科幻风格界面，支持全屏展示。
+<img width="1000" height="692" alt="iShot_2026-05-10_15 10 06" src="https://github.com/user-attachments/assets/537cc3f5-5ce1-410a-8c67-4633b53b1e0e" />
 
-![界面截图](screenshot.png)
 
 ## 功能特性
 
