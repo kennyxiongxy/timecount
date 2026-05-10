@@ -66,7 +66,11 @@ struct SingleTimerFullscreenView: View {
 
                                 Text(statusText(timer))
                                     .font(.system(size: timeFontSize * 0.22))
-                                    .foregroundStyle(themeManager.secondary)
+                                    .foregroundStyle(
+                                        timer.textColorHex.isEmpty
+                                        ? themeManager.secondary
+                                        : Color(hex: timer.textColorHex).opacity(0.7)
+                                    )
                             }
                         }
 
@@ -79,14 +83,22 @@ struct SingleTimerFullscreenView: View {
                                     .font(.system(size: min(timeFontSize * 0.7, 48)))
                             }
                             .buttonStyle(.plain)
-                            .foregroundStyle(themeManager.accent)
+                            .foregroundStyle(
+                                timer.accentColorHex.isEmpty
+                                ? themeManager.accent
+                                : Color(hex: timer.accentColorHex)
+                            )
 
                             Button(action: { timerEngine.reset(timer: timer) }) {
                                 Image(systemName: "arrow.counterclockwise")
                                     .font(.system(size: min(timeFontSize * 0.55, 40)))
                             }
                             .buttonStyle(.plain)
-                            .foregroundStyle(themeManager.secondary)
+                            .foregroundStyle(
+                                timer.textColorHex.isEmpty
+                                ? themeManager.secondary
+                                : Color(hex: timer.textColorHex).opacity(0.6)
+                            )
                         }
                         .padding(.vertical, 16)
                         .padding(.horizontal, 32)

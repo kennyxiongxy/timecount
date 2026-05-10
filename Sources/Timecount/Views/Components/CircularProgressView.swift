@@ -67,15 +67,21 @@ struct CircularProgressView: View {
         return Color(hex: customAccentColorHex)
     }
 
+    private var effectivePrimary: Color {
+        themeManager?.primary ?? Color(hex: "#FF00FF")
+    }
+
     private var outerColor: Color {
         if isFinished { return .red.opacity(0.6) }
         if isRunning { return effectiveAccent.opacity(0.55) }
+        if !customAccentColorHex.isEmpty { return effectiveAccent.opacity(0.4) }
         return (themeManager?.glow ?? Color(hex: "#FF00FF")).opacity(0.4)
     }
 
     private var innerColor: Color {
         if isFinished { return .red }
         if isRunning { return effectiveAccent }
-        return themeManager?.primary ?? Color(hex: "#FF00FF")
+        if !customAccentColorHex.isEmpty { return effectiveAccent }
+        return effectivePrimary
     }
 }
