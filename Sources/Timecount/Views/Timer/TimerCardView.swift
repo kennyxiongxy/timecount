@@ -9,6 +9,7 @@ struct TimerCardView: View {
     @EnvironmentObject var soundManager: SoundManager
     @Environment(\.modelContext) private var modelContext
     @State private var editedName: String
+    @State private var showColorPopover = false
 
     init(timer: TimerModel) {
         self.timer = timer
@@ -22,10 +23,18 @@ struct TimerCardView: View {
                 TextField("计时器名称", text: $editedName, onCommit: commitName)
                     .textFieldStyle(.plain)
                     .font(.headline)
-                    .foregroundStyle(themeManager.primary)
+                    .foregroundStyle(
+                        timer.textColorHex.isEmpty
+                        ? themeManager.primary
+                        : Color(hex: timer.textColorHex)
+                    )
                     .multilineTextAlignment(.center)
 
-                TimerDisplayView(timer: timer)
+                TimerDisplayView(
+                    timer: timer,
+                    customTextColorHex: timer.textColorHex,
+                    customAccentColorHex: timer.accentColorHex
+                )
 
                 TimeInputView(timer: timer)
 
@@ -33,14 +42,25 @@ struct TimerCardView: View {
             }
             .padding(16)
 
-            // Delete button — top-right corner
-            Button(action: deleteTimer) {
-                Image(systemName: "xmark")
-                    .font(.system(size: 11, weight: .bold))
-                    .foregroundColor(themeManager.primary)
-                    .frame(width: 22, height: 22)
+            // Config + Delete buttons — top-right corner
+            HStack(spacing: 4) {
+                Button(action: { showColorPopover = true }) {
+                    Image(systemName: "paintpalette")
+                        .font(.system(size: 10, weight: .medium))
+                        .foregroundColor(themeManager.secondary.opacity(0.7))
+                        .frame(width: 22, height: 22)
+                }
+                .buttonStyle(.plain)
+                .help("自定义卡片颜色")
+
+                Button(action: deleteTimer) {
+                    Image(systemName: "xmark")
+                        .font(.system(size: 11, weight: .bold))
+                        .foregroundColor(themeManager.primary)
+                        .frame(width: 22, height: 22)
+                }
+                .buttonStyle(.plain)
             }
-            .buttonStyle(.plain)
             .padding(6)
         }
         .background(
@@ -51,9 +71,19 @@ struct TimerCardView: View {
         )
         .overlay(
             RoundedRectangle(cornerRadius: 16)
-                .strokeBorder(themeManager.cardBorder.opacity(0.4), lineWidth: 1)
+                .strokeBorder(
+                    timer.accentColorHex.isEmpty
+                    ? themeManager.cardBorder.opacity(0.4)
+                    : Color(hex: timer.accentColorHex).opacity(0.4),
+                    lineWidth: 1
+                )
         )
-        .shadow(color: themeManager.glow.opacity(0.15), radius: 8)
+        .shadow(
+            color: (timer.accentColorHex.isEmpty
+                    ? themeManager.glow.opacity(0.15)
+                    : Color(hex: timer.accentColorHex).opacity(0.15)),
+            radius: 8
+        )
         .simultaneousGesture(
             TapGesture(count: 2).onEnded {
                 windowManager.openFullscreen(for: timer.id, modelContext: modelContext)
@@ -63,6 +93,13 @@ struct TimerCardView: View {
             Button("复制", action: duplicateTimer)
             Divider()
             Button("删除", role: .destructive, action: deleteTimer)
+        }
+        .popover(isPresented: $showColorPopover, arrowEdge: .top) {
+            CardColorPickerView(
+                backgroundColorHex: $timer.backgroundColorHex,
+                textColorHex: $timer.textColorHex,
+                accentColorHex: $timer.accentColorHex
+            )
         }
     }
 

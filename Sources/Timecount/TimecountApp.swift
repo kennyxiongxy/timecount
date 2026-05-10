@@ -44,5 +44,15 @@ struct TimecountApp: App {
         .windowStyle(.hiddenTitleBar)
         .defaultSize(width: 1000, height: 620)
         .windowResizability(.contentSize)
+
+        MenuBarExtra("Timecount", systemImage: "timer") {
+            MenuBarView()
+                .modelContainer(modelContainer)
+                .environmentObject(timerEngine)
+                .environmentObject(themeManager)
+                .environmentObject(soundManager)
+                .environmentObject(windowManager)
+        }
+        .menuBarExtraStyle(.menu)
     }
 }

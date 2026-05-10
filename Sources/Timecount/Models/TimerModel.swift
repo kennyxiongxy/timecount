@@ -9,6 +9,8 @@ final class TimerModel {
     var remainingSeconds: Int = 0
     var statusRawValue: String = TimerStatus.idle.rawValue
     var backgroundColorHex: String = ""
+    var textColorHex: String = ""
+    var accentColorHex: String = ""
     var sortOrder: Int = 0
     var createdAt: Date = Date()
     var warningMinutesOverride: Int? = nil

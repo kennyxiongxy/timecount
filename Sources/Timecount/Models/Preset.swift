@@ -8,13 +8,15 @@ final class Preset {
     var totalSeconds: Int = 0
     var isBuiltIn: Bool = false
     var showInSidebar: Bool = true
+    var showInMenuBar: Bool = true
     var sortOrder: Int = 0
 
-    init(name: String, totalSeconds: Int, isBuiltIn: Bool = false, showInSidebar: Bool = true, sortOrder: Int = 0) {
+    init(name: String, totalSeconds: Int, isBuiltIn: Bool = false, showInSidebar: Bool = true, showInMenuBar: Bool = true, sortOrder: Int = 0) {
         self.name = name
         self.totalSeconds = totalSeconds
         self.isBuiltIn = isBuiltIn
         self.showInSidebar = showInSidebar
+        self.showInMenuBar = showInMenuBar
         self.sortOrder = sortOrder
     }
 }

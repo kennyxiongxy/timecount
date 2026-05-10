@@ -31,7 +31,11 @@ struct SingleTimerFullscreenView: View {
 
                         Text(timer.name)
                             .font(.system(size: min(timeFontSize * 1.3, 96), weight: .medium))
-                            .foregroundStyle(themeManager.primary)
+                            .foregroundStyle(
+                                timer.textColorHex.isEmpty
+                                ? themeManager.primary
+                                : Color(hex: timer.textColorHex)
+                            )
                             .padding(.bottom, ringSize * 0.12)
 
                         ZStack {
@@ -41,6 +45,7 @@ struct SingleTimerFullscreenView: View {
                                 isRunning: timer.isRunning,
                                 isFinished: timer.status == .finished,
                                 themeManager: themeManager,
+                                customAccentColorHex: timer.accentColorHex,
                                 outerLineWidth: 16
                             )
                             .frame(width: ringSize, height: ringSize)
@@ -50,9 +55,14 @@ struct SingleTimerFullscreenView: View {
                                     .font(.custom(fontName, size: timeFontSize).bold())
                                     .foregroundStyle(
                                         timer.status == .finished ? .red :
-                                        timer.isRunning ? themeManager.accent : themeManager.primary
+                                        timer.isRunning
+                                            ? (timer.accentColorHex.isEmpty ? themeManager.accent : Color(hex: timer.accentColorHex))
+                                            : (timer.textColorHex.isEmpty ? themeManager.primary : Color(hex: timer.textColorHex))
                                     )
-                                    .shadow(color: (timer.isRunning ? themeManager.accent : themeManager.primary).opacity(0.4), radius: timeFontSize * 0.12)
+                                    .shadow(color: (timer.status == .finished ? .red :
+                                        timer.isRunning
+                                            ? (timer.accentColorHex.isEmpty ? themeManager.accent : Color(hex: timer.accentColorHex))
+                                            : (timer.textColorHex.isEmpty ? themeManager.primary : Color(hex: timer.textColorHex))).opacity(0.4), radius: timeFontSize * 0.12)
 
                                 Text(statusText(timer))
                                     .font(.system(size: timeFontSize * 0.22))

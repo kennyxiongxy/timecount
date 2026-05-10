@@ -373,11 +373,21 @@ struct PresetManagementView: View {
             List {
                 ForEach(presets) { preset in
                     HStack {
-                        Toggle(isOn: Binding(
-                            get: { preset.showInSidebar },
-                            set: { preset.showInSidebar = $0; try? modelContext.save() }
-                        )) {
+                        VStack(alignment: .leading, spacing: 2) {
                             Text(preset.name)
+                                .font(.system(size: 13))
+                            HStack(spacing: 12) {
+                                Toggle("侧边栏", isOn: Binding(
+                                    get: { preset.showInSidebar },
+                                    set: { preset.showInSidebar = $0; try? modelContext.save() }
+                                ))
+                                Toggle("菜单栏", isOn: Binding(
+                                    get: { preset.showInMenuBar },
+                                    set: { preset.showInMenuBar = $0; try? modelContext.save() }
+                                ))
+                            }
+                            .font(.caption)
+                            .toggleStyle(.checkbox)
                         }
                         Spacer()
                         Text(TimeInterval.formatFull(preset.totalSeconds))

@@ -6,6 +6,7 @@ struct CircularProgressView: View {
     let isRunning: Bool
     let isFinished: Bool
     var themeManager: ThemeManager?
+    var customAccentColorHex: String = ""
     var outerLineWidth: CGFloat = 8
     var innerLineWidth: CGFloat = 5
 
@@ -59,15 +60,22 @@ struct CircularProgressView: View {
     private var outerWidth: CGFloat { outerLineWidth }
     private var innerWidth: CGFloat { innerLineWidth }
 
+    private var effectiveAccent: Color {
+        if customAccentColorHex.isEmpty {
+            return themeManager?.accent ?? Color(hex: "#00FFFF")
+        }
+        return Color(hex: customAccentColorHex)
+    }
+
     private var outerColor: Color {
         if isFinished { return .red.opacity(0.6) }
-        if isRunning { return (themeManager?.accent ?? Color(hex: "#00FFFF")).opacity(0.55) }
+        if isRunning { return effectiveAccent.opacity(0.55) }
         return (themeManager?.glow ?? Color(hex: "#FF00FF")).opacity(0.4)
     }
 
     private var innerColor: Color {
         if isFinished { return .red }
-        if isRunning { return themeManager?.accent ?? Color(hex: "#00FFFF") }
+        if isRunning { return effectiveAccent }
         return themeManager?.primary ?? Color(hex: "#FF00FF")
     }
 }

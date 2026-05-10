@@ -5,6 +5,8 @@ struct TimerDisplayView: View {
     @EnvironmentObject var timerEngine: TimerEngine
     @EnvironmentObject var themeManager: ThemeManager
     @AppStorage("timerFontName") private var fontName = "SF Mono"
+    var customTextColorHex: String = ""
+    var customAccentColorHex: String = ""
 
     var body: some View {
         ZStack {
@@ -13,7 +15,8 @@ struct TimerDisplayView: View {
                 remainingSeconds: timer.remainingSeconds,
                 isRunning: timer.isRunning,
                 isFinished: timer.status == .finished,
-                themeManager: themeManager
+                themeManager: themeManager,
+                customAccentColorHex: customAccentColorHex
             )
             .frame(width: 140, height: 140)
 
@@ -27,17 +30,28 @@ struct TimerDisplayView: View {
 
                 Text(statusLabel)
                     .font(.caption)
-                    .foregroundStyle(themeManager.secondary)
+                    .foregroundStyle(
+                        customTextColorHex.isEmpty
+                        ? themeManager.secondary
+                        : Color(hex: customTextColorHex).opacity(0.7)
+                    )
             }
         }
         .animation(.easeInOut(duration: 0.3), value: timer.status)
     }
 
     private var timeColor: Color {
+        let effAccent = customAccentColorHex.isEmpty
+            ? themeManager.accent
+            : Color(hex: customAccentColorHex)
+        let effPrimary = customTextColorHex.isEmpty
+            ? themeManager.primary
+            : Color(hex: customTextColorHex)
+
         switch timer.status {
         case .finished: return .red
-        case .running:  return themeManager.accent
-        default:        return themeManager.primary
+        case .running:  return effAccent
+        default:        return effPrimary
         }
     }
 
