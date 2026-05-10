@@ -19,7 +19,7 @@ final class ThemeConfiguration {
     var glowRadius: Double = 12.0
     var glowOpacity: Double = 0.7
 
-    var timerFontName: String = "SF Mono"
+    var timerFontName: String = "LiquidCrystal"
     var uiFontName: String = ".AppleSystemUIFont"
     var timerFontSize: Double = 48.0
 

@@ -30,6 +30,9 @@ struct TimecountApp: App {
         _windowManager = StateObject(wrappedValue: windows)
 
         DataSeeder.seedIfNeeded(in: context)
+
+        // Register custom fonts
+        FontManager.registerCustomFonts()
     }
 
     var body: some Scene {
@@ -40,9 +43,10 @@ struct TimecountApp: App {
                 .environmentObject(themeManager)
                 .environmentObject(soundManager)
                 .environmentObject(windowManager)
+                .frame(minWidth: 1000, maxWidth: 1000, minHeight: 660, maxHeight: 660)
         }
         .windowStyle(.hiddenTitleBar)
-        .defaultSize(width: 1000, height: 620)
+        .defaultSize(width: 1000, height: 660)
         .windowResizability(.contentSize)
 
         MenuBarExtra("Timecount", systemImage: "timer") {

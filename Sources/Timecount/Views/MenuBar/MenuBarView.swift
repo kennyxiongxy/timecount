@@ -14,7 +14,7 @@ struct MenuBarView: View {
     var body: some View {
         if !menuPresets.isEmpty {
             Text("预设时长")
-                .font(.system(size: 10, weight: .semibold))
+                .font(.custom("AaXiaoGouGuaiGuaiXiangSuTi-2", size: 10))
                 .foregroundStyle(.secondary)
 
             ForEach(menuPresets) { preset in

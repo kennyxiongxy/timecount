@@ -4,8 +4,7 @@ struct MultiTimerGridView: View {
     let timers: [TimerModel]
 
     var body: some View {
-        let columnCount = min(4, max(1, timers.count))
-        let columns = Array(repeating: GridItem(.flexible(), spacing: 12), count: columnCount)
+        let columns = Array(repeating: GridItem(.flexible(), spacing: 12), count: 4)
 
         ScrollView {
             LazyVGrid(columns: columns, spacing: 12) {

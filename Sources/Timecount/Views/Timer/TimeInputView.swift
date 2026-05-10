@@ -22,6 +22,7 @@ struct TimeInputView: View {
                 placeholder: "例如 5m30s",
                 text: $inputText,
                 borderColor: themeManager.primary.opacity(0.5),
+                font: .custom("AaXiaoGouGuaiGuaiXiangSuTi-2", size: 11),
                 frameWidth: 130,
                 isInvalid: isInvalid,
                 onSubmit: applySetup

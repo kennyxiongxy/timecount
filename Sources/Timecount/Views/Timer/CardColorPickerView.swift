@@ -6,11 +6,12 @@ struct CardColorPickerView: View {
     @Binding var accentColorHex: String
     @EnvironmentObject var themeManager: ThemeManager
     @Environment(\.dismiss) private var dismiss
+    @Environment(\.modelContext) private var modelContext
 
     var body: some View {
         VStack(alignment: .leading, spacing: 14) {
             Text("卡片颜色")
-                .font(.headline)
+                .font(.custom("AaXiaoGouGuaiGuaiXiangSuTi-2", size: 13))
                 .foregroundStyle(.primary)
 
             colorRow(label: "背景色", hex: $backgroundColorHex,
@@ -28,13 +29,13 @@ struct CardColorPickerView: View {
                     textColorHex = ""
                     accentColorHex = ""
                 }
-                .font(.caption)
+                .font(.custom("AaXiaoGouGuaiGuaiXiangSuTi-2", size: 10))
                 Spacer()
                 Button("完成") {
                     dismiss()
                 }
                 .buttonStyle(.borderedProminent)
-                .font(.caption)
+                .font(.custom("AaXiaoGouGuaiGuaiXiangSuTi-2", size: 10))
             }
         }
         .padding()
@@ -46,12 +47,15 @@ struct CardColorPickerView: View {
         HStack(spacing: 8) {
             Text(label)
                 .frame(width: 80, alignment: .leading)
-                .font(.system(size: 12))
+                .font(.custom("AaXiaoGouGuaiGuaiXiangSuTi-2", size: 12))
                 .foregroundStyle(.primary)
 
             ColorPicker("", selection: Binding(
                 get: { hex.wrappedValue.isEmpty ? fallback : Color(hex: hex.wrappedValue) },
-                set: { hex.wrappedValue = $0.toHex() }
+                set: {
+                    hex.wrappedValue = $0.toHex()
+                    try? modelContext.save()
+                }
             ))
             .labelsHidden()
 

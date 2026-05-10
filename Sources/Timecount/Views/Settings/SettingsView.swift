@@ -61,7 +61,7 @@ struct SettingsView: View {
 // MARK: - General
 
 struct GeneralSettingsView: View {
-    @AppStorage("timerFontName") private var fontName = "SF Mono"
+    @AppStorage("timerFontName") private var fontName = "LiquidCrystal"
     @State private var allFonts: [String] = NSFontManager.shared.availableFontFamilies
 
     var body: some View {
@@ -69,34 +69,59 @@ struct GeneralSettingsView: View {
             Form {
                 Section {
                     Text("自动适配：每行最多显示 4 个倒计时")
-                        .font(.caption)
+                        .font(.custom("AaXiaoGouGuaiGuaiXiangSuTi-2", size: 10))
                         .foregroundStyle(.secondary)
                 }
 
                 Section("计时器字体") {
-                    Picker("字体", selection: $fontName) {
-                        ForEach(allFonts, id: \.self) { name in
-                            Text(name).tag(name)
+                    VStack(spacing: 8) {
+                        // Font list
+                        List(allFonts, id: \.self, selection: Binding(
+                            get: { fontName },
+                            set: { newName in
+                                if let name = newName {
+                                    fontName = name
+                                }
+                            }
+                        )) { name in
+                            HStack(spacing: 12) {
+                                Text(name)
+                                    .font(.system(size: 12))
+                                    .foregroundStyle(.primary)
+
+                                Spacer()
+
+                                Text("01:30:00")
+                                    .font(.custom(name, size: 16))
+                                    .foregroundStyle(
+                                        name == fontName
+                                        ? Color.accentColor
+                                        : .secondary
+                                    )
+                            }
+                            .padding(.vertical, 4)
+                            .contentShape(Rectangle())
                         }
-                    }
-                    .frame(height: 180)
+                        .frame(height: 200)
+                        .listStyle(.plain)
 
-                    // Preview
-                    VStack(spacing: 4) {
-                        Text("预览")
-                            .font(.caption)
-                            .foregroundStyle(.secondary)
-                            .frame(maxWidth: .infinity, alignment: .leading)
+                        // Preview
+                        VStack(spacing: 4) {
+                            Text("预览")
+                                .font(.custom("AaXiaoGouGuaiGuaiXiangSuTi-2", size: 10))
+                                .foregroundStyle(.secondary)
+                                .frame(maxWidth: .infinity, alignment: .leading)
 
-                        Text("01:30:00")
-                            .font(.custom(fontName, size: 32))
-                            .foregroundStyle(.primary)
-                            .frame(maxWidth: .infinity)
-                            .padding(.vertical, 12)
-                            .background(
-                                RoundedRectangle(cornerRadius: 8)
-                                    .fill(Color.black.opacity(0.3))
-                            )
+                            Text("01:30:00")
+                                .font(.custom(fontName, size: 32))
+                                .foregroundStyle(.primary)
+                                .frame(maxWidth: .infinity)
+                                .padding(.vertical, 12)
+                                .background(
+                                    RoundedRectangle(cornerRadius: 8)
+                                        .fill(Color.black.opacity(0.3))
+                                )
+                        }
                     }
                 }
             }
@@ -174,14 +199,17 @@ struct SoundSettingsView: View {
                 Divider().padding(.vertical, 8)
 
                 VStack(alignment: .leading, spacing: 6) {
-                    Text("预警时间").font(.headline)
+                    Text("预警时间").font(.custom("AaXiaoGouGuaiGuaiXiangSuTi-2", size: 13))
                     HStack {
-                        Text("结束前").foregroundStyle(.secondary)
+                        Text("结束前")
+                            .font(.custom("AaXiaoGouGuaiGuaiXiangSuTi-2", size: 12))
+                            .foregroundStyle(.secondary)
                         TextField("", value: $warningMinutes, format: .number)
                             .textFieldStyle(.roundedBorder)
                             .frame(width: 50)
                             .multilineTextAlignment(.center)
                         Text("分钟提醒")
+                            .font(.custom("AaXiaoGouGuaiGuaiXiangSuTi-2", size: 12))
                             .foregroundStyle(.secondary)
                     }
                 }
@@ -198,7 +226,7 @@ struct SoundSettingsView: View {
         event: SoundManager.SoundEvent
     ) -> some View {
         VStack(alignment: .leading, spacing: 8) {
-            Text(title).font(.headline)
+            Text(title).font(.custom("AaXiaoGouGuaiGuaiXiangSuTi-2", size: 13))
 
             Picker("来源", selection: mode) {
                 ForEach(SoundMode.allCases, id: \.self) { m in Text(m.rawValue).tag(m) }
@@ -211,19 +239,19 @@ struct SoundSettingsView: View {
 
             switch mode.wrappedValue {
             case .off:
-                Text("已关闭").font(.caption).foregroundStyle(.tertiary)
+                Text("已关闭").font(.custom("AaXiaoGouGuaiGuaiXiangSuTi-2", size: 10)).foregroundStyle(.tertiary)
                     .onAppear { soundManager.setDisabled(true, for: event) }
 
             case .system:
                 HStack {
-                    Image(systemName: "speaker.wave.2.fill").font(.caption).foregroundStyle(.secondary)
-                    Text("系统默认（\(systemName)）").font(.caption).foregroundStyle(.secondary)
+                    Image(systemName: "speaker.wave.2.fill").font(.custom("AaXiaoGouGuaiGuaiXiangSuTi-2", size: 10)).foregroundStyle(.secondary)
+                    Text("系统默认（\(systemName)）").font(.custom("AaXiaoGouGuaiGuaiXiangSuTi-2", size: 10)).foregroundStyle(.secondary)
                     Spacer()
                     Button("试听") {
                         soundManager.resetToSystemDefault(for: event)
                         previewSound(for: event)
                     }
-                    .buttonStyle(.borderless).font(.caption)
+                    .buttonStyle(.borderless).font(.custom("AaXiaoGouGuaiGuaiXiangSuTi-2", size: 10))
                 }
 
             case .builtIn:
@@ -242,21 +270,21 @@ struct SoundSettingsView: View {
                     Spacer()
                     if !builtInName.wrappedValue.isEmpty {
                         Button("试听") { previewSound(for: event) }
-                            .buttonStyle(.borderless).font(.caption)
+                            .buttonStyle(.borderless).font(.custom("AaXiaoGouGuaiGuaiXiangSuTi-2", size: 10))
                     }
                 }
 
             case .custom:
                 HStack {
                     if let fileURL = customURL.wrappedValue {
-                        Text(fileURL.lastPathComponent).font(.caption).foregroundStyle(.primary).lineLimit(1)
+                        Text(fileURL.lastPathComponent).font(.custom("AaXiaoGouGuaiGuaiXiangSuTi-2", size: 10)).foregroundStyle(.primary).lineLimit(1)
                         Button("清除") {
                             customURL.wrappedValue = nil
                             soundManager.resetToSystemDefault(for: event)
                         }
-                        .buttonStyle(.borderless).font(.caption)
+                        .buttonStyle(.borderless).font(.custom("AaXiaoGouGuaiGuaiXiangSuTi-2", size: 10))
                     } else {
-                        Text("未选择文件").font(.caption).foregroundStyle(.tertiary)
+                        Text("未选择文件").font(.custom("AaXiaoGouGuaiGuaiXiangSuTi-2", size: 10)).foregroundStyle(.tertiary)
                     }
                     Spacer()
                     Button("选择文件...") {
@@ -265,10 +293,10 @@ struct SoundSettingsView: View {
                             soundManager.setCustomSound(url: url, for: event)
                         }
                     }
-                    .buttonStyle(.borderless).font(.caption)
+                    .buttonStyle(.borderless).font(.custom("AaXiaoGouGuaiGuaiXiangSuTi-2", size: 10))
                     if customURL.wrappedValue != nil {
                         Button("试听") { previewSound(for: event) }
-                            .buttonStyle(.borderless).font(.caption)
+                            .buttonStyle(.borderless).font(.custom("AaXiaoGouGuaiGuaiXiangSuTi-2", size: 10))
                     }
                 }
             }
@@ -308,7 +336,7 @@ struct ThemeSettingsView: View {
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 12) {
-                Text("内置主题").font(.headline)
+                Text("内置主题").font(.custom("AaXiaoGouGuaiGuaiXiangSuTi-2", size: 13))
                 LazyVGrid(columns: [GridItem(.adaptive(minimum: 120))], spacing: 12) {
                     ForEach(builtInThemes) { theme in
                         ThemePreviewCard(
@@ -320,7 +348,7 @@ struct ThemeSettingsView: View {
                 }
 
                 if !customThemes.isEmpty {
-                    Text("自定义主题").font(.headline).padding(.top)
+                    Text("自定义主题").font(.custom("AaXiaoGouGuaiGuaiXiangSuTi-2", size: 13)).padding(.top)
                     LazyVGrid(columns: [GridItem(.adaptive(minimum: 120))], spacing: 12) {
                         ForEach(customThemes) { theme in
                             ThemePreviewCard(
@@ -368,14 +396,14 @@ struct PresetManagementView: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
-            Text("管理预设时长").font(.headline)
+            Text("管理预设时长").font(.custom("AaXiaoGouGuaiGuaiXiangSuTi-2", size: 13))
 
             List {
                 ForEach(presets) { preset in
                     HStack {
                         VStack(alignment: .leading, spacing: 2) {
                             Text(preset.name)
-                                .font(.system(size: 13))
+                                .font(.custom("AaXiaoGouGuaiGuaiXiangSuTi-2", size: 13))
                             HStack(spacing: 12) {
                                 Toggle("侧边栏", isOn: Binding(
                                     get: { preset.showInSidebar },
@@ -386,20 +414,20 @@ struct PresetManagementView: View {
                                     set: { preset.showInMenuBar = $0; try? modelContext.save() }
                                 ))
                             }
-                            .font(.caption)
+                            .font(.custom("AaXiaoGouGuaiGuaiXiangSuTi-2", size: 10))
                             .toggleStyle(.checkbox)
                         }
                         Spacer()
                         Text(TimeInterval.formatFull(preset.totalSeconds))
                             .foregroundStyle(.secondary)
-                            .font(.caption.monospaced())
+                            .font(.custom("AaXiaoGouGuaiGuaiXiangSuTi-2", size: 10))
                         if !preset.isBuiltIn {
                             Button {
                                 modelContext.delete(preset)
                                 try? modelContext.save()
                             } label: {
                                 Image(systemName: "xmark.circle.fill")
-                                    .font(.caption)
+                                    .font(.custom("AaXiaoGouGuaiGuaiXiangSuTi-2", size: 10))
                                     .foregroundStyle(.red.opacity(0.7))
                             }
                             .buttonStyle(.plain)
@@ -415,6 +443,7 @@ struct PresetManagementView: View {
                 VStack(alignment: .leading, spacing: 8) {
                     HStack {
                         Text("名称")
+                            .font(.custom("AaXiaoGouGuaiGuaiXiangSuTi-2", size: 12))
                             .frame(width: 40, alignment: .leading)
                         TextField("例如：番茄钟", text: $newPresetName)
                             .textFieldStyle(.roundedBorder)
@@ -423,27 +452,28 @@ struct PresetManagementView: View {
 
                     HStack(spacing: 6) {
                         Text("时长")
+                            .font(.custom("AaXiaoGouGuaiGuaiXiangSuTi-2", size: 12))
                             .frame(width: 40, alignment: .leading)
                         TextField("0", value: $newHours, format: .number)
                             .textFieldStyle(.roundedBorder)
                             .frame(width: 50)
                             .multilineTextAlignment(.center)
                         Text("时")
-                            .font(.caption).foregroundStyle(.secondary)
+                            .font(.custom("AaXiaoGouGuaiGuaiXiangSuTi-2", size: 10)).foregroundStyle(.secondary)
 
                         TextField("5", value: $newMinutes, format: .number)
                             .textFieldStyle(.roundedBorder)
                             .frame(width: 50)
                             .multilineTextAlignment(.center)
                         Text("分")
-                            .font(.caption).foregroundStyle(.secondary)
+                            .font(.custom("AaXiaoGouGuaiGuaiXiangSuTi-2", size: 10)).foregroundStyle(.secondary)
 
                         TextField("0", value: $newSeconds, format: .number)
                             .textFieldStyle(.roundedBorder)
                             .frame(width: 50)
                             .multilineTextAlignment(.center)
                         Text("秒")
-                            .font(.caption).foregroundStyle(.secondary)
+                            .font(.custom("AaXiaoGouGuaiGuaiXiangSuTi-2", size: 10)).foregroundStyle(.secondary)
 
                         Spacer()
 

@@ -6,6 +6,8 @@ final class FullscreenWindowController: NSWindowController, NSWindowDelegate {
     private let timerID: UUID
     private var localMonitor: Any?
     private let onClose: (() -> Void)?
+    private let timerEngine: TimerEngine
+    private let modelContext: ModelContext
 
     init(
         timerID: UUID,
@@ -17,6 +19,8 @@ final class FullscreenWindowController: NSWindowController, NSWindowDelegate {
     ) {
         self.onClose = onClose
         self.timerID = timerID
+        self.timerEngine = timerEngine
+        self.modelContext = modelContext
 
         let screenFrame = NSScreen.main?.frame ?? NSRect(x: 0, y: 0, width: 1920, height: 1080)
 
@@ -51,6 +55,10 @@ final class FullscreenWindowController: NSWindowController, NSWindowDelegate {
                 self?.close()
                 return nil
             }
+            if event.keyCode == 49 {
+                self?.toggleTimer()
+                return nil
+            }
             return event
         }
     }
@@ -72,6 +80,22 @@ final class FullscreenWindowController: NSWindowController, NSWindowDelegate {
     deinit {
         if let monitor = localMonitor {
             NSEvent.removeMonitor(monitor)
+        }
+    }
+
+    private func toggleTimer() {
+        var descriptor = FetchDescriptor<TimerModel>()
+        descriptor.fetchLimit = 1
+        descriptor.predicate = #Predicate { $0.id == timerID }
+        guard let timer = try? modelContext.fetch(descriptor).first else { return }
+
+        switch timer.status {
+        case .running:
+            timerEngine.pause(timer: timer)
+        case .finished:
+            timerEngine.pause(timer: timer)
+        default:
+            timerEngine.start(timer: timer)
         }
     }
 }

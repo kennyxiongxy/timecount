@@ -4,7 +4,7 @@ struct TimerDisplayView: View {
     @Bindable var timer: TimerModel
     @EnvironmentObject var timerEngine: TimerEngine
     @EnvironmentObject var themeManager: ThemeManager
-    @AppStorage("timerFontName") private var fontName = "SF Mono"
+    @AppStorage("timerFontName") private var fontName = "LiquidCrystal"
     var customTextColorHex: String = ""
     var customAccentColorHex: String = ""
 
@@ -18,7 +18,7 @@ struct TimerDisplayView: View {
                 themeManager: themeManager,
                 customAccentColorHex: customAccentColorHex
             )
-            .frame(width: 140, height: 140)
+            .frame(width: 120, height: 120)
 
             VStack(spacing: 4) {
                 Text(timer.displayTime)
@@ -28,13 +28,18 @@ struct TimerDisplayView: View {
                     .shadow(color: timeColor.opacity(0.3), radius: 12)
                     .contentTransition(.numericText())
 
-                Text(statusLabel)
-                    .font(.caption)
-                    .foregroundStyle(
-                        customTextColorHex.isEmpty
-                        ? themeManager.secondary
-                        : Color(hex: customTextColorHex).opacity(0.7)
-                    )
+                HStack(spacing: 5) {
+                    Circle()
+                        .fill(statusColor)
+                        .frame(width: 5, height: 5)
+                    Text(statusLabel)
+                        .font(.custom("AaXiaoGouGuaiGuaiXiangSuTi-2", size: 11))
+                        .foregroundStyle(
+                            customTextColorHex.isEmpty
+                            ? themeManager.secondary
+                            : Color(hex: customTextColorHex).opacity(0.7)
+                        )
+                }
             }
         }
         .animation(.easeInOut(duration: 0.3), value: timer.status)
@@ -49,7 +54,8 @@ struct TimerDisplayView: View {
             : Color(hex: customTextColorHex)
 
         switch timer.status {
-        case .finished: return .red
+        case .finished:
+            return customAccentColorHex.isEmpty ? .red : effAccent
         case .running:  return effAccent
         default:        return effPrimary
         }
@@ -57,10 +63,10 @@ struct TimerDisplayView: View {
 
     private var displayFontSize: CGFloat {
         let chars = max(CGFloat(timer.displayTime.count), 4)
-        let innerDiameter: CGFloat = 140 * 0.88
-        let sideMargin: CGFloat = 140 * 0.025
+        let innerDiameter: CGFloat = 120 * 0.88
+        let sideMargin: CGFloat = 120 * 0.025
         let availableWidth = innerDiameter - sideMargin * 2
-        return min(availableWidth / (chars * 0.62), 32)
+        return min(availableWidth / (chars * 0.62), 28)
     }
 
     private var statusLabel: String {
@@ -69,6 +75,22 @@ struct TimerDisplayView: View {
         case .paused:   return "已暂停"
         case .finished: return "已完成"
         case .idle:     return "就绪"
+        }
+    }
+
+    private var statusColor: Color {
+        let effAccent = customAccentColorHex.isEmpty
+            ? themeManager.accent
+            : Color(hex: customAccentColorHex)
+
+        switch timer.status {
+        case .finished:
+            return customAccentColorHex.isEmpty ? .red : effAccent
+        case .running:  return effAccent
+        case .paused:   return .orange
+        case .idle:     return customTextColorHex.isEmpty
+            ? themeManager.secondary
+            : Color(hex: customTextColorHex).opacity(0.7)
         }
     }
 }

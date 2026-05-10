@@ -12,7 +12,10 @@ let package = Package(
     targets: [
         .executableTarget(
             name: "Timecount",
-            path: "Sources/Timecount"
+            path: "Sources/Timecount",
+            resources: [
+                .process("Resources")
+            ]
         ),
         .testTarget(
             name: "TimecountTests",

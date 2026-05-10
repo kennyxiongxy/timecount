@@ -13,15 +13,15 @@ struct DataSeeder {
         guard let count = try? context.fetchCount(descriptor), count == 0 else { return }
 
         let presets: [(String, Int)] = [
-            ("30 seconds", 30),
-            ("1 minute", 60),
-            ("3 minutes", 180),
-            ("5 minutes", 300),
-            ("10 minutes", 600),
-            ("15 minutes", 900),
-            ("30 minutes", 1800),
-            ("1 hour", 3600),
-            ("2 hours", 7200),
+            ("30秒", 30),
+            ("1分钟", 60),
+            ("3分钟", 180),
+            ("5分钟", 300),
+            ("10分钟", 600),
+            ("15分钟", 900),
+            ("30分钟", 1800),
+            ("1小时", 3600),
+            ("2小时", 7200),
         ]
 
         for (index, (name, seconds)) in presets.enumerated() {

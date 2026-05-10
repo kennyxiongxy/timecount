@@ -14,15 +14,15 @@ enum ThemePresets {
             t.glowOpacity = 0.7
         }),
         ("Cyber Matrix", { t in
-            t.backgroundColorHex = "#000D00"
-            t.cardBackgroundColorHex = "#001A00"
+            t.backgroundColorHex = "#000800"
+            t.cardBackgroundColorHex = "#001000"
             t.cardBorderColorHex = "#00FF41"
             t.primaryTextColorHex = "#00FF41"
             t.secondaryTextColorHex = "#008F11"
             t.accentColorHex = "#00FF41"
             t.glowColorHex = "#00FF41"
-            t.glowRadius = 14
-            t.glowOpacity = 0.8
+            t.glowRadius = 16
+            t.glowOpacity = 0.85
         }),
         ("Synthwave", { t in
             t.backgroundColorHex = "#1A0030"

@@ -11,7 +11,7 @@ struct ThemeCustomizationView: View {
         ScrollView {
             VStack(alignment: .leading, spacing: 16) {
                 Text("自定义主题")
-                    .font(.title2)
+                    .font(.custom("AaXiaoGouGuaiGuaiXiangSuTi-2", size: 20))
                     .padding(.bottom, 8)
 
                 colorSection("背景色", hex: $theme.backgroundColorHex)
@@ -24,7 +24,7 @@ struct ThemeCustomizationView: View {
                 Divider()
 
                 Group {
-                    Text("发光效果").font(.headline)
+                    Text("发光效果").font(.custom("AaXiaoGouGuaiGuaiXiangSuTi-2", size: 13))
                     colorSection("发光颜色", hex: $theme.glowColorHex)
 
                     HStack {
@@ -41,7 +41,7 @@ struct ThemeCustomizationView: View {
                 Divider()
 
                 Group {
-                    Text("特效").font(.headline)
+                    Text("特效").font(.custom("AaXiaoGouGuaiGuaiXiangSuTi-2", size: 13))
                     Toggle("CRT 扫描线", isOn: $theme.useScanlines)
                     Toggle("粒子效果", isOn: $theme.useParticleEffect)
                 }
