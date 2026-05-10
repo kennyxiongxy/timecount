@@ -4,6 +4,7 @@ import AppKit
 
 struct SingleTimerFullscreenView: View {
     let timerID: UUID
+    var onClose: (() -> Void)?
     @Environment(\.modelContext) private var modelContext
     @EnvironmentObject var timerEngine: TimerEngine
     @EnvironmentObject var themeManager: ThemeManager
@@ -24,7 +25,7 @@ struct SingleTimerFullscreenView: View {
             let timeFontSize = availableWidth / (charCount * 0.62)
 
             ZStack {
-                themeManager.bg
+                fullscreenBackground
                     .ignoresSafeArea()
 
                 if let timer = timer {
@@ -121,7 +122,7 @@ struct SingleTimerFullscreenView: View {
                     HStack {
                         Spacer()
                         Button {
-                            NSApp.keyWindow?.close()
+                            onClose?()
                         } label: {
                             Image(systemName: "xmark.circle.fill")
                                 .font(.system(size: 28))
@@ -143,6 +144,13 @@ struct SingleTimerFullscreenView: View {
         .onReceive(Timer.publish(every: 2, on: .main, in: .common).autoconnect()) { _ in
             refreshTimer()
         }
+    }
+
+    private var fullscreenBackground: Color {
+        guard let hex = timer?.backgroundColorHex, !hex.isEmpty else {
+            return themeManager.bg
+        }
+        return Color(hex: hex)
     }
 
     private func refreshTimer() {

@@ -38,7 +38,10 @@ struct TimerCardView: View {
 
                 TimeInputView(timer: timer)
 
-                TimerControlsView(timer: timer)
+                TimerControlsView(
+                    timer: timer,
+                    customAccentColorHex: timer.accentColorHex
+                )
             }
             .padding(16)
 
@@ -47,7 +50,11 @@ struct TimerCardView: View {
                 Button(action: { showColorPopover = true }) {
                     Image(systemName: "paintpalette")
                         .font(.system(size: 10, weight: .medium))
-                        .foregroundColor(themeManager.secondary.opacity(0.7))
+                        .foregroundColor(
+                            timer.textColorHex.isEmpty
+                            ? themeManager.secondary.opacity(0.7)
+                            : Color(hex: timer.textColorHex).opacity(0.7)
+                        )
                         .frame(width: 22, height: 22)
                 }
                 .buttonStyle(.plain)
@@ -56,7 +63,11 @@ struct TimerCardView: View {
                 Button(action: deleteTimer) {
                     Image(systemName: "xmark")
                         .font(.system(size: 11, weight: .bold))
-                        .foregroundColor(themeManager.primary)
+                        .foregroundColor(
+                            timer.textColorHex.isEmpty
+                            ? themeManager.primary
+                            : Color(hex: timer.textColorHex)
+                        )
                         .frame(width: 22, height: 22)
                 }
                 .buttonStyle(.plain)

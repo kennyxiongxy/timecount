@@ -6,6 +6,13 @@ struct TimerControlsView: View {
     @EnvironmentObject var themeManager: ThemeManager
     @EnvironmentObject var windowManager: WindowManager
     @Environment(\.modelContext) private var modelContext
+    var customAccentColorHex: String = ""
+
+    private var accentColor: Color {
+        customAccentColorHex.isEmpty
+            ? themeManager.accent
+            : Color(hex: customAccentColorHex)
+    }
 
     var body: some View {
         HStack(spacing: 20) {
@@ -13,7 +20,7 @@ struct TimerControlsView: View {
                 Image(systemName: playPauseIcon)
                     .font(.title2)
                     .frame(width: 40, height: 40)
-                    .foregroundStyle(themeManager.accent)
+                    .foregroundStyle(accentColor)
             }
             .buttonStyle(.plain)
             .disabled(timer.totalSeconds == 0)
@@ -22,7 +29,7 @@ struct TimerControlsView: View {
                 Image(systemName: "arrow.counterclockwise")
                     .font(.title2)
                     .frame(width: 40, height: 40)
-                    .foregroundStyle(themeManager.secondary)
+                    .foregroundStyle(accentColor.opacity(0.7))
             }
             .buttonStyle(.plain)
             .disabled(timer.status == .idle)
@@ -33,7 +40,7 @@ struct TimerControlsView: View {
                       : "arrow.up.left.and.arrow.down.right")
                     .font(.title2)
                     .frame(width: 40, height: 40)
-                    .foregroundStyle(themeManager.secondary)
+                    .foregroundStyle(accentColor.opacity(0.7))
             }
             .buttonStyle(.plain)
         }

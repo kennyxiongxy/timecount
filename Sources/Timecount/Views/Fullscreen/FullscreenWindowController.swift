@@ -34,7 +34,9 @@ final class FullscreenWindowController: NSWindowController, NSWindowDelegate {
         window.hasShadow = false
         window.hidesOnDeactivate = false
 
-        let rootView = SingleTimerFullscreenView(timerID: timerID)
+        let rootView = SingleTimerFullscreenView(timerID: timerID, onClose: { [weak window] in
+            window?.close()
+        })
             .modelContext(modelContext)
             .environmentObject(timerEngine)
             .environmentObject(themeManager)
