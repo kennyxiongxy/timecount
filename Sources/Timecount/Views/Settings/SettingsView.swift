@@ -140,6 +140,9 @@ struct SoundSettingsView: View {
     @AppStorage("startBuiltIn") private var startBuiltIn = ""
     @AppStorage("endBuiltIn") private var endBuiltIn = ""
     @AppStorage("warningBuiltIn") private var warningBuiltIn = ""
+    @AppStorage("startCustomPath") private var startCustomPath = ""
+    @AppStorage("endCustomPath") private var endCustomPath = ""
+    @AppStorage("warningCustomPath") private var warningCustomPath = ""
 
     @EnvironmentObject var soundManager: SoundManager
     @State private var startCustom: URL? = nil
@@ -162,15 +165,22 @@ struct SoundSettingsView: View {
     private var builtInNames: [String] { SoundManager.builtInSoundNames() }
 
     private func applyPersistedSettings() {
-        for (modeRaw, builtIn, event) in [(startModeRaw, startBuiltIn, SoundManager.SoundEvent.start),
-                                           (endModeRaw, endBuiltIn, .end),
-                                           (warningModeRaw, warningBuiltIn, .warning)] {
+        // Restore custom file URLs from AppStorage
+        if !startCustomPath.isEmpty { startCustom = URL(fileURLWithPath: startCustomPath) }
+        if !endCustomPath.isEmpty { endCustom = URL(fileURLWithPath: endCustomPath) }
+        if !warningCustomPath.isEmpty { warningCustom = URL(fileURLWithPath: warningCustomPath) }
+
+        for (modeRaw, builtIn, customURL, event) in [(startModeRaw, startBuiltIn, startCustom, SoundManager.SoundEvent.start),
+                                                      (endModeRaw, endBuiltIn, endCustom, .end),
+                                                      (warningModeRaw, warningBuiltIn, warningCustom, .warning)] {
             let mode = SoundMode(rawValue: modeRaw) ?? .system
             soundManager.setDisabled(mode == .off, for: event)
             if mode == .system {
                 soundManager.resetToSystemDefault(for: event)
             } else if mode == .builtIn, !builtIn.isEmpty {
                 soundManager.loadBuiltInSound(named: builtIn, for: event)
+            } else if mode == .custom, let url = customURL {
+                soundManager.setCustomSound(url: url, for: event)
             }
         }
     }
@@ -280,6 +290,7 @@ struct SoundSettingsView: View {
                         Text(fileURL.lastPathComponent).font(.custom("AaXiaoGouGuaiGuaiXiangSuTi-2", size: 10)).foregroundStyle(.primary).lineLimit(1)
                         Button("清除") {
                             customURL.wrappedValue = nil
+                            saveCustomPath(nil, for: event)
                             soundManager.resetToSystemDefault(for: event)
                         }
                         .buttonStyle(.borderless).font(.custom("AaXiaoGouGuaiGuaiXiangSuTi-2", size: 10))
@@ -290,6 +301,7 @@ struct SoundSettingsView: View {
                     Button("选择文件...") {
                         if let url = openSoundFilePicker() {
                             customURL.wrappedValue = url
+                            saveCustomPath(url.path, for: event)
                             soundManager.setCustomSound(url: url, for: event)
                         }
                     }
@@ -308,6 +320,14 @@ struct SoundSettingsView: View {
         case .start:  soundManager.playStartSound()
         case .end:    soundManager.playEndSound()
         case .warning: soundManager.playWarningSound()
+        }
+    }
+
+    private func saveCustomPath(_ path: String?, for event: SoundManager.SoundEvent) {
+        switch event {
+        case .start:  startCustomPath = path ?? ""
+        case .end:    endCustomPath = path ?? ""
+        case .warning: warningCustomPath = path ?? ""
         }
     }
 

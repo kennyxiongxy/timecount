@@ -22,6 +22,7 @@ final class SoundManager: ObservableObject {
 
     init() {
         preloadSystemSounds()
+        restorePersistedSettings()
     }
 
     // MARK: - Built-in sounds
@@ -131,5 +132,35 @@ final class SoundManager: ObservableObject {
         startSystemSound = NSSound(named: "Pop")
         endSystemSound = NSSound(named: "Basso")
         warningSystemSound = NSSound(named: "Funk")
+    }
+
+    private func restorePersistedSettings() {
+        let defaults = UserDefaults.standard
+        let modes = [
+            (defaults.string(forKey: "startSoundMode") ?? "系统默认", defaults.string(forKey: "startBuiltIn") ?? "", defaults.string(forKey: "startCustomPath"), SoundEvent.start),
+            (defaults.string(forKey: "endSoundMode") ?? "系统默认", defaults.string(forKey: "endBuiltIn") ?? "", defaults.string(forKey: "endCustomPath"), SoundEvent.end),
+            (defaults.string(forKey: "warningSoundMode") ?? "系统默认", defaults.string(forKey: "warningBuiltIn") ?? "", defaults.string(forKey: "warningCustomPath"), SoundEvent.warning)
+        ]
+
+        for (modeRaw, builtIn, customPath, event) in modes {
+            switch modeRaw {
+            case "关闭":
+                setDisabled(true, for: event)
+                resetToSystemDefault(for: event)
+            case "内置铃声" where !builtIn.isEmpty:
+                setDisabled(false, for: event)
+                loadBuiltInSound(named: builtIn, for: event)
+            case "自定义文件":
+                setDisabled(false, for: event)
+                if let path = customPath, !path.isEmpty, FileManager.default.fileExists(atPath: path) {
+                    setCustomSound(url: URL(fileURLWithPath: path), for: event)
+                } else {
+                    resetToSystemDefault(for: event)
+                }
+            default: // "系统默认"
+                setDisabled(false, for: event)
+                resetToSystemDefault(for: event)
+            }
+        }
     }
 }
